@@ -1,0 +1,26 @@
+{
+  "name": "solana-transactions-wrapper",
+  "version": "1.0.0",
+  "description": "Handy tool to execute buy/sell transactions on the SOLANA chain",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Al366io/solana-transactions-wrapper.git"
+  },
+  "keywords": [
+    "solana",
+    "transactions",
+    "wrapper",
+    "library",
+    "jupiter"
+  ],
+  "author": "Al366io",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Al366io/solana-transactions-wrapper/issues"
+  },
+  "homepage": "https://github.com/Al366io/solana-transactions-wrapper#readme"
+}

@@ -2,6 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { Wallet } from "@project-serum/anchor";
 import * as Swapper from "./swapper-helper.js";
 import * as WalletInfo from "./walletInfo.js";
+import { SOLANA_ADDRESS } from "./consts";
 
 /**
  * Sells ALL tokens in wallet for given addressToken
@@ -19,11 +20,6 @@ export const sellToken = async (
   sellAll: boolean = true
 ) => {
   try {
-    // const wallet = new Wallet(
-    //   Keypair.fromSecretKey(bs58.decode(process.env.WALLET_PRIVATE_KEY))
-    // );
-    const SOLANA_ADDRESS = "So11111111111111111111111111111111111111112";
-
     const amountOfTokenToSell = await WalletInfo.getBalanceOfToken(publicKeyOfWalletToQuery, addressOfTokenOut, connection);
     
     if (!amountOfTokenToSell) {

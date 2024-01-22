@@ -1,20 +1,16 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { Wallet } from "@project-serum/anchor";
 import * as Swapper from "./swapper-helper.js";
+import { SOLANA_ADDRESS } from "./consts";
 
 export const buyToken = async (
   addressOfTokenIn: string,
   amountOfTokenOut: number,
   slippage: number,
   connection: Connection,
-  wallet: Wallet
+  wallet: Wallet,
 ) => {
   try {
-    // const wallet = new Wallet(
-    //   Keypair.fromSecretKey(bs58.decode(process.env.WALLET_PRIVATE_KEY))
-    // );
-    const SOLANA_ADDRESS = "So11111111111111111111111111111111111111112";
-
     let mint = await connection.getParsedAccountInfo(
       new PublicKey(SOLANA_ADDRESS)
     );

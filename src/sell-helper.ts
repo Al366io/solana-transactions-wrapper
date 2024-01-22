@@ -63,12 +63,3 @@ export const sellToken = async (
     throw new Error(error);
   }
 };
-
-// USAGE:
-// Swapper.withRetries(async () => {
-//   return await sellToken(
-//     "CQSPU12VppGZB7LeRkEaKzrRBzvo1LyA9mR2ydiwKHaL",
-//     13.88,
-//     1
-//   );
-// });

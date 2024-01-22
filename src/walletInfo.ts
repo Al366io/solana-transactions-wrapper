@@ -98,16 +98,3 @@ export const getSOLBalance = async (
     throw new Error(error);
   }
 };
-
-// USAGE:
-// const RPC_ENDPOINT =
-// "https://wiser-old-gadget.solana-mainnet.quiknode.pro/cf30ae8c5cef48ec15b829ab71429671dc0aa47b/";
-
-// const connection = new Connection(RPC_ENDPOINT);
-// console.log(
-// await getBalanceOfToken(
-//   "CQSPU12VppGZB7LeRkEaKzrRBzvo1LyA9mR2ydiwKHaL",
-//   connection
-// )
-// await getSOLBalance(connection)
-// );

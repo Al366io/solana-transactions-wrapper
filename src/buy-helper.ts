@@ -46,12 +46,3 @@ export const buyToken = async (
     throw new Error(error);
   }
 };
-
-// USAGE:
-// Swapper.withRetries(async () => {
-//   return await buyToken(
-//     "CQSPU12VppGZB7LeRkEaKzrRBzvo1LyA9mR2ydiwKHaL",
-//     0.001,
-//     1
-//   );
-// });

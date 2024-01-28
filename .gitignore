@@ -38,3 +38,5 @@ yarn.lock
 
 # Ignore editor backup files
 *~
+
+*.tgz

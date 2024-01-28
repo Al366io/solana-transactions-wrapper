@@ -1,8 +1,8 @@
 {
   "name": "solana-transactions-wrapper",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Handy tool to execute buy/sell transactions on the SOLANA chain",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"

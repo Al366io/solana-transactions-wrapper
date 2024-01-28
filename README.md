@@ -12,7 +12,7 @@
 
 <h3>Importing the package</h3>
 
-<pre><code>import { buy_token, sellToken, getAccountTokens } from 'solana-transactions-wrapper';</code></pre>
+<pre><code>import { buy_token, sell_token, get_tokens } from 'solana-transactions-wrapper';</code></pre>
 
 <h3>Buying a token</h3>
 
@@ -36,7 +36,7 @@
 
 <h3>Selling a token</h3>
 
-<pre><code>const txid = await sellToken(
+<pre><code>const txid = await sell_token(
   RPC_ENDPOINT,
   WALLET_PRIVATE_KEY,
   ADDRESS_OF_TOKEN_TO_SELL,
@@ -56,7 +56,7 @@
 
 <h3>Getting account tokens</h3>
 
-<pre><code>const tokens: TokensObject = await getAccountTokens(
+<pre><code>const tokens: TokensObject = await get_tokens(
   RPC_ENDPOINT,
   WALLET_PRIVATE_KEY
 );</code></pre>

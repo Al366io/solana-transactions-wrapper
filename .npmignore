@@ -1,0 +1,25 @@
+# Development files
+__tests__
+test/
+tests/
+*.spec.ts
+*.test.ts
+*.config.js
+*.config.ts
+tsconfig.json
+
+# Source files
+src/
+
+# Node.js specific files
+node_modules/
+
+# Miscellaneous
+.editorconfig
+.eslintignore
+.eslintrc
+.git
+.gitignore
+.npmignore
+package-lock.json
+README.md

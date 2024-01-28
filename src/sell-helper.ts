@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { Wallet } from "@project-serum/anchor";
-import * as Swapper from "./swapper-helper.js";
-import * as WalletInfo from "./walletInfo.js";
+import * as Swapper from "./swapper-helper";
+import * as WalletInfo from "./walletInfo";
 import { SOLANA_ADDRESS } from "./consts";
 
 /**

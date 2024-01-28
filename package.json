@@ -22,5 +22,14 @@
   "bugs": {
     "url": "https://github.com/Al366io/solana-transactions-wrapper/issues"
   },
-  "homepage": "https://github.com/Al366io/solana-transactions-wrapper#readme"
+  "homepage": "https://github.com/Al366io/solana-transactions-wrapper#readme",
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "@project-serum/anchor": "^0.26.0",
+    "@solana/spl-token": "^0.3.11",
+    "@solana/web3.js": "^1.89.1",
+    "cross-fetch": "^4.0.0"
+  }
 }

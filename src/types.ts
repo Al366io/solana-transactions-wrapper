@@ -40,3 +40,10 @@ type Fee = {
 export type SwapResponse = {
   swapTransaction: string; // base64 encoded transaction string
 };
+
+export type TokenInfo = {
+  symbol: string;
+  balance: number;
+};
+
+export type TokensObject = Record<string, TokenInfo>;

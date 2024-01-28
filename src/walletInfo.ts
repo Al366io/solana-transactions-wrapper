@@ -6,6 +6,7 @@ import {
 } from "@solana/web3.js";
 import dotenv from "dotenv";
 import { SOLANA_TOKENPROGRAM_ID } from "./consts";
+import { TokensObject } from "./types";
 dotenv.config();
 
 /**
@@ -22,7 +23,10 @@ export const getBalanceOfToken = async (
     if (!publicKeyOfWalletToQuery) {
       throw new Error("No wallet to query");
     }
-    const accounts = await getTokenAccounts(publicKeyOfWalletToQuery, connection);
+    const accounts = await getTokenAccounts(
+      publicKeyOfWalletToQuery,
+      connection
+    );
     const relevantAccount = accounts.find((account) => {
       const parsedAccountInfo = account.account.data;
       if (parsedAccountInfo instanceof Buffer) {
@@ -51,7 +55,7 @@ export const getBalanceOfToken = async (
   }
 };
 
-async function getTokenAccounts(
+export async function getTokenAccounts(
   wallet: string,
   solanaConnection: Connection
 ): Promise<
@@ -85,16 +89,84 @@ async function getTokenAccounts(
  * @returns balance of SOL in correct format
  */
 export const getSOLBalance = async (
-  connection: Connection
+  connection: Connection,
+  publicKeyOfWalletToQuery: string = process.env.WALLET_PUBLIC_KEY!
 ): Promise<number> => {
   try {
-    const WALLET_TO_QUERY = process.env.WALLET_PUBLIC_KEY;
-    if (!WALLET_TO_QUERY) {
+    if (!publicKeyOfWalletToQuery) {
       throw new Error("No wallet to query");
     }
-    const balance = await connection.getBalance(new PublicKey(WALLET_TO_QUERY));
+    const balance = await connection.getBalance(
+      new PublicKey(publicKeyOfWalletToQuery)
+    );
     return balance / 10 ** 9;
   } catch (error: any) {
     throw new Error(error);
   }
+};
+
+/**
+ * Gets all tokens in wallet
+ * @param publicKeyOfWalletToQuery 
+ * @param connection 
+ * @returns Promise<TokensObject>
+ */
+export const getAccountTokens = async (
+  publicKeyOfWalletToQuery: string,
+  connection: Connection
+) => {
+  try {
+    if (!publicKeyOfWalletToQuery) {
+      throw new Error("No wallet to query");
+    }
+    const accounts = await getTokenAccounts(
+      publicKeyOfWalletToQuery,
+      connection
+    );
+
+    let tokensObject: TokensObject = {};
+
+    for (let i = 0; i < accounts.length; i++) {
+      const token = accounts[i];
+      if (token.account.data instanceof Buffer) {
+        throw new Error("relevantAccount is a buffer");
+      }
+      if (token.account.data["parsed"]["info"]["tokenAmount"]["uiAmount"] <= 0) {
+        continue;
+      }
+      const tokenAddress: string =
+        token.account.data["parsed"]["info"]["mint"].toString();
+      const tokenBalance: number =
+        token.account.data["parsed"]["info"]["tokenAmount"]["uiAmount"];
+      const tokenName: string = await getTokenName(tokenAddress);
+
+      tokensObject[tokenAddress] = {
+        symbol: tokenName,
+        balance: tokenBalance,
+      };
+    }
+
+    return tokensObject;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+/**
+ * Gets token name
+ * @param tokenAddressesArray
+ * @returns Promise<string>
+ */
+const getTokenName = async (tokenAddress: string): Promise<string> => {
+  // TODO: cache this. Horrible.
+
+  const tokenList = await fetch("https://token.jup.ag/all");
+  const tokenListJson = await tokenList.json();
+  const token = tokenListJson.find(
+    (token: any) => token.address === tokenAddress
+  );
+  if (!token) {
+    return "";
+  }
+  return token.name.toString();
 };

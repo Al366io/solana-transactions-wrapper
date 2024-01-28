@@ -104,10 +104,8 @@ export const withRetries = async (
         } attempts with TxId: ${result}`
       );
       return result;
-    } catch (error) {
-      console.error(
-        `Error during ${func.name} attempt ${retries + 1}: ${error}`
-      );
+    } catch (error: any) {
+      console.error(`Error during ${func.name} - attempt ${retries + 1}: ${error.message}`);
       await new Promise((resolve) => setTimeout(resolve, delayBetweenRetries));
       retries++;
     }
@@ -120,7 +118,7 @@ export const withRetries = async (
  * Create connection to Solana RPC endpoint
  * @returns {Connection} connection
  */
-export const createConnection = (RPC_ENDPOINT: string) => {
+export const createConnection = (RPC_ENDPOINT: string): Connection => {
   try {
     const connection = new Connection(RPC_ENDPOINT);
     return connection;

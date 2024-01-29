@@ -23,3 +23,5 @@ node_modules/
 .npmignore
 package-lock.json
 README.md
+
+*.tgz

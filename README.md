@@ -40,19 +40,20 @@
   RPC_ENDPOINT,
   WALLET_PRIVATE_KEY,
   ADDRESS_OF_TOKEN_TO_SELL,
-  AMOUNT_OF_TOKEN_TO_SELL,
   SLIPPAGE
+  SELL_ALL,
 );</code></pre>
 
 <ul>
   <li><strong>RPC_ENDPOINT:</strong> Your RPC endpoint to connect to.</li>
   <li><strong>WALLET_PRIVATE_KEY:</strong> The private key of the wallet you want to sell from.</li>
   <li><strong>ADDRESS_OF_TOKEN_TO_SELL:</strong> The address of the token you want to sell.</li>
-  <li><strong>AMOUNT_OF_TOKEN_TO_SELL:</strong> The amount of the token you want to sell.</li>
   <li><strong>SLIPPAGE:</strong> The slippage you want to use (default 1%).</li>
+  <li><strong>SELL_ALL:</strong> Boolean to decide wether to sell all or not. Defaults to true</li>
 </ul>
 
 <p>This function returns a promise that resolves to the transaction id of the sell operation.</p>
+<p>For now it only allows to sell all the bag of that token</p>
 
 <h3>Getting account tokens</h3>
 
@@ -67,15 +68,3 @@
 </ul>
 
 <p>This function returns a promise that resolves to an object mapping token addresses to their balance and symbol.</p>
-
-<h2>Types</h2>
-
-<p>This package exports a <code>TokensObject</code> type that you can use to type the result of <code>getAccountTokens</code>.</p>
-
-<pre><code>import { TokensObject } from 'solana-transactions-wrapper';</code></pre>
-
-<p><code>TokensObject</code> is a record where each key is a token address (string), and the value is an object with properties <code>symbol</code> (string) and <code>balance</code> (number).</p>
-
-<h2>Dependencies</h2>
-
-<p>This package depends other packages, Please make sure to install them</p>

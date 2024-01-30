@@ -68,6 +68,7 @@
   <li><strong>RPC_ENDPOINT:</strong> Your RPC endpoint to connect to.</li>
   <li><strong>WALLET_PRIVATE_KEY:</strong> The private key of the wallet you want to get the tokens from.</li>
 </ul>
+<p>This function returns a promise that resolves to an object mapping token addresses to their balance and symbol.</p>
 
 <h3>Getting Token Balance</h3>
 
@@ -82,5 +83,5 @@
   <li><strong>WALLET_PRIVATE_KEY:</strong> The private key of the wallet you want to get the tokens from.</li>
   <li><strong>TOKEN_ADDRESS:</strong> The address of the token you want to get the balance from.</li>
 </ul>
+<p>This function returns a promise that resolves to the balance of the token.</p>
 
-<p>This function returns a promise that resolves to an object mapping token addresses to their balance and symbol.</p>

@@ -12,15 +12,16 @@ import { SOLANA_ADDRESS } from "./consts";
  * @returns TxId
  */
 export const sellToken = async (
+  sellAll: boolean = true,
   addressOfTokenOut: string,
   slippage: number,
   connection: Connection,
   wallet: Wallet,
   publicKeyOfWalletToQuery: string,
-  sellAll: boolean = true
+  amountOfTokenToSell: number | undefined,
 ) => {
   try {
-    const amountOfTokenToSell = await WalletInfo.getBalanceOfToken(publicKeyOfWalletToQuery, addressOfTokenOut, connection);
+    sellAll ? amountOfTokenToSell = await WalletInfo.getBalanceOfToken(publicKeyOfWalletToQuery, addressOfTokenOut, connection) : amountOfTokenToSell; 
     
     if (!amountOfTokenToSell) {
       throw new Error("No tokens to sell");
@@ -58,8 +59,34 @@ export const sellToken = async (
       wallet,
       connection
     );
-    return txid;
+
+    const status = await connection.getSignatureStatus(txid);
+    if (
+      status &&
+      status.value &&
+      status.value.err === null
+    ) {
+      return txid;
+    } else {
+      throw new Error("Transaction Failed");
+    }
   } catch (error: any) {
+    if (error.message.startsWith("TransactionExpiredTimeoutError")) {
+      const match = error.message.match(/Check signature (\w+) using/);
+      if (match) {
+        const expiredTxid = match[1];
+        const status = await connection.getSignatureStatus(expiredTxid);
+        if (
+          status &&
+          status.value &&
+          status.value.confirmationStatus === "finalized" && 
+          status.value.err === null
+        ) {
+          return expiredTxid;
+        }
+      }
+      throw new Error("Transaction expired");
+    }
     throw new Error(error);
   }
 };

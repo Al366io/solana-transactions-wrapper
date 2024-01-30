@@ -25,3 +25,5 @@ package-lock.json
 README.md
 
 *.tgz
+
+try.ts

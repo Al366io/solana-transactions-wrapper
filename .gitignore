@@ -40,3 +40,5 @@ yarn.lock
 *~
 
 *.tgz
+
+try.ts

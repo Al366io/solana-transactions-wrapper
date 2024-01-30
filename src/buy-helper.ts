@@ -8,7 +8,7 @@ export const buyToken = async (
   amountOfTokenOut: number,
   slippage: number,
   connection: Connection,
-  wallet: Wallet,
+  wallet: Wallet
 ) => {
   try {
     let mint = await connection.getParsedAccountInfo(
@@ -41,8 +41,34 @@ export const buyToken = async (
       wallet,
       connection
     );
-    return txid;
+
+    const status = await connection.getSignatureStatus(txid);
+    if (
+      status &&
+      status.value &&
+      status.value.err === null
+    ) {
+      return txid;
+    } else {
+      throw new Error("Transaction Failed");
+    }
   } catch (error: any) {
+    if (error.message.startsWith("TransactionExpiredTimeoutError")) {
+      const match = error.message.match(/Check signature (\w+) using/);
+      if (match) {
+        const expiredTxid = match[1];
+        const status = await connection.getSignatureStatus(expiredTxid);
+        if (
+          status &&
+          status.value &&
+          status.value.confirmationStatus === "finalized" && 
+          status.value.err === null
+        ) {
+          return expiredTxid;
+        }
+      }
+      throw new Error("Transaction expired");
+    }
     throw new Error(error);
   }
 };

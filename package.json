@@ -1,6 +1,6 @@
 {
   "name": "solana-transactions-wrapper",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Handy tool to execute buy/sell transactions on the SOLANA chain",
   "main": "dist/index.js",
   "scripts": {

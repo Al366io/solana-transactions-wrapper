@@ -38,7 +38,7 @@ Trying to buy token using "amount" SOL...
 Transaction sent with txid: "transaction_id"
 Waiting for confirmation... 🕒
 Transaction confirmed ✅</pre>
-
+<hr>
 <h2>Selling a token</h2>
 <h4> Parameters: </h4>
 <ul>
@@ -66,6 +66,7 @@ Transaction sent with txid: "transaction_id"
 Waiting for confirmation... 🕒
 Transaction confirmed ✅</pre>
 
+<hr>
 <h2>Getting Account Tokens Balances</h2>
 
 <pre><code>const tokens_balances = await get_tokens_balances(
@@ -79,6 +80,7 @@ Transaction confirmed ✅</pre>
 </ul>
 <p>This function returns a promise that resolves to an object mapping token addresses to their balance and symbol.</p>
 
+<hr>
 <h2>Getting Token Balance</h2>
 
 <pre><code>const token_balance = await get_token_balance(

@@ -26,7 +26,7 @@ export const sellToken = async (
     if (!amountOfTokenToSell) {
       throw new Error("No tokens to sell");
     }
-
+    console.log(`Selling ${amountOfTokenToSell} of ${addressOfTokenOut}`);
     let mint = await connection.getParsedAccountInfo(
       new PublicKey(addressOfTokenOut)
     );
@@ -51,7 +51,8 @@ export const sellToken = async (
     const walletPublicKey = wallet.publicKey.toString();
     const swapTransaction = await Swapper.getSwapTransaction(
       quoteResponse,
-      walletPublicKey
+      walletPublicKey,
+      false,
     );
 
     const txid = await Swapper.finalizeTransaction(
@@ -60,15 +61,21 @@ export const sellToken = async (
       connection
     );
 
-    const status = await connection.getSignatureStatus(txid);
-    if (
-      status &&
-      status.value &&
-      status.value.err === null
-    ) {
-      return txid;
-    } else {
-      throw new Error("Transaction Failed");
+    console.log("Waiting for confirmation... 🕒");
+    
+    let subscriptionId;
+    try {
+      subscriptionId = connection.onSignature(txid, (updatedTxInfo, context) => {
+        if (updatedTxInfo.err) {
+          console.error('Transaction failed:', updatedTxInfo.err);
+        } else {
+          console.log('Transaction confirmed ✅');
+        }
+      }, 'finalized');
+    } finally {
+      if (subscriptionId) {
+        connection.removeSignatureListener(subscriptionId);
+      }
     }
   } catch (error: any) {
     if (error.message.startsWith("TransactionExpiredTimeoutError")) {

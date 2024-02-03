@@ -1,6 +1,6 @@
 import { Connection, Keypair } from "@solana/web3.js";
 import { buyToken } from "./buy-helper";
-import { createConnection, withRetries } from "./swapper-helper";
+import { createConnection } from "./swapper-helper";
 import { Wallet } from "@project-serum/anchor";
 import bs58 from "bs58";
 import { sellToken } from "./sell-helper";
@@ -22,7 +22,7 @@ export const buy_token = async (
   ADDRESS_OF_TOKEN_TO_BUY: string,
   AMOUNT_OF_SOLANA_TO_SPEND: number,
   SLIPPAGE: number = 1
-): Promise<string> => {
+): Promise<void> => {
   try {
     const connection: Connection = createConnection(RPC_ENDPOINT);
     console.log("Connection established 🚀");
@@ -30,20 +30,17 @@ export const buy_token = async (
       Keypair.fromSecretKey(bs58.decode(WALLET_PRIVATE_KEY))
     );
     console.log("Wallet fetched ✅");
-    console.log(`Trying to buy token using ${AMOUNT_OF_SOLANA_TO_SPEND} SOL with 3 retries and 60 seconds timeout...`);
-    const buyTokenFunction = async () => {
-      return await buyToken(
-        ADDRESS_OF_TOKEN_TO_BUY,
-        AMOUNT_OF_SOLANA_TO_SPEND,
-        SLIPPAGE,
-        connection,
-        wallet
-      );
-    };
-    const result = await withRetries(buyTokenFunction);
-    return result;
+    console.log(`Trying to buy token using ${AMOUNT_OF_SOLANA_TO_SPEND} SOL...`);
+
+    await buyToken(
+      ADDRESS_OF_TOKEN_TO_BUY,
+      AMOUNT_OF_SOLANA_TO_SPEND,
+      SLIPPAGE,
+      connection,
+      wallet
+    );
   } catch (error: any) {
-    throw new Error(error);
+    throw new Error(error.message);
   }
 };
 
@@ -68,16 +65,15 @@ export const sell_token = async (
   if (!SELL_ALL && !AMOUNT_OF_TOKEN_TO_SELL) {
     throw new Error("You need to specify AMOUNT_OF_TOKEN_TO_SELL if SELL_ALL is false");
   }
-  const connection: Connection = createConnection(RPC_ENDPOINT);
-  console.log("Connection established 🚀");
-  const wallet = new Wallet(
-    Keypair.fromSecretKey(bs58.decode(WALLET_PRIVATE_KEY))
-  );
-  console.log("Wallet fetched ✅");
-  const amount = SELL_ALL ? "ALL" : AMOUNT_OF_TOKEN_TO_SELL;
-  console.log(`Trying to sell ${amount} token with 3 retries and 60 seconds timeout...`);
-  const sellTokenFunction = async () => {
-    return await sellToken(
+  try {
+    const connection: Connection = createConnection(RPC_ENDPOINT);
+    console.log("Connection established 🚀");
+    const wallet = new Wallet(
+      Keypair.fromSecretKey(bs58.decode(WALLET_PRIVATE_KEY))
+    );
+    console.log("Wallet fetched ✅");
+
+    const result = await sellToken(
       SELL_ALL,
       ADDRESS_OF_TOKEN_TO_SELL,
       SLIPPAGE,
@@ -86,10 +82,10 @@ export const sell_token = async (
       wallet.publicKey.toString(),
       AMOUNT_OF_TOKEN_TO_SELL,
     );
-  };
-  const result = await withRetries(sellTokenFunction);
-
-  return result;
+    return result;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
 };
 
 /**

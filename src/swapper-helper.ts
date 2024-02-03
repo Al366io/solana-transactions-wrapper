@@ -1,6 +1,6 @@
-import { Connection, VersionedTransaction } from "@solana/web3.js";
+import { Connection, PublicKey, VersionedTransaction } from "@solana/web3.js";
 import fetch from "cross-fetch";
-import { Route, SwapResponse} from "./types";
+import { Route, SwapResponse } from "./types";
 import { Wallet } from "@project-serum/anchor";
 
 /**
@@ -8,19 +8,21 @@ import { Wallet } from "@project-serum/anchor";
  * @param {string} addressOfTokenOut The token that we are selling
  * @param {string} addressOfTokenIn The token that we are buying
  * @param {number} convertedAmountOfTokenOut The amount of tokens that we are selling
- * @param {number} slippage
+ * @param {number} slippage The slippage percentage
+ * @param {boolean} buy If true, it's a buy transaction
  * @returns Promise<QuoteResponse>
  */
 export const getQuote = async (
   addressOfTokenOut: string,
   addressOfTokenIn: string,
   convertedAmountOfTokenOut: number,
-  slippage: number
+  slippage: number,
+  buy: boolean = false
 ) => {
   slippage *= 100;
-  const resp = await fetch(
-    `https://quote-api.jup.ag/v6/quote?inputMint=${addressOfTokenOut}\&outputMint=${addressOfTokenIn}\&amount=${convertedAmountOfTokenOut}\&slippageBps=${slippage}`
-  );
+  const url = buy ? `https://quote-api.jup.ag/v6/quote?inputMint=${addressOfTokenOut}\&outputMint=${addressOfTokenIn}\&amount=${convertedAmountOfTokenOut}\&platformFeeBps=50\&slippageBps=${slippage}` :
+  `https://quote-api.jup.ag/v6/quote?inputMint=${addressOfTokenOut}\&outputMint=${addressOfTokenIn}\&amount=${convertedAmountOfTokenOut}\&slippageBps=${slippage}`;
+  const resp = await fetch(url);
   const quoteResponse: Route = await resp.json();
   return quoteResponse;
 };
@@ -29,22 +31,48 @@ export const getQuote = async (
  * Get serialized transactions for the swap
  * @returns {Promise<string>} swapTransaction
  */
-export const getSwapTransaction = async (quoteResponse: Route, walletPublicKey: string): Promise<string> => {
+export const getSwapTransaction = async (
+  quoteResponse: Route,
+  walletPublicKey: string,
+  buy: boolean,
+  addr_mint: string = ""
+): Promise<string> => {
   try {
+    let body: any;
+    if (buy) {
+      const f_a_p_k: PublicKey = new PublicKey(
+        "m5J33cgkEfdm5h35diF2CcDGRC5MVHkY1qPd4ZjCrxM"
+      );
+      const mint = new PublicKey(addr_mint);
+      let [feeAccount] = await PublicKey.findProgramAddressSync(
+        [Buffer.from("referral_ata"), f_a_p_k.toBuffer(), mint.toBuffer()],
+        new PublicKey("REFER4ZgmyYx9c6He5XfaTMiGfdLwRnkV4RPp9t9iF3")
+      );
+      body = {
+        quoteResponse,
+        userPublicKey: walletPublicKey,
+        wrapAndUnwrapSol: true,
+        restrictIntermediateTokens: false,
+        autoMultiplier: 2,
+        prioritizationFeeLamports: 'auto',
+        feeAccount,
+      };
+    } else {
+      body = {
+        quoteResponse,
+        userPublicKey: walletPublicKey,
+        wrapAndUnwrapSol: true,
+        restrictIntermediateTokens: false,
+        prioritizationFeeLamports: 'auto',
+        autoMultiplier: 2,
+      };
+    }
     const resp = await fetch("https://quote-api.jup.ag/v6/swap", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        quoteResponse,
-        userPublicKey: walletPublicKey,
-        wrapAndUnwrapSol: true,
-        restrictIntermediateTokens: false,
-        prioritizationFeeLamports: "auto",
-        dynamicComputeUnitLimit: true,
-        autoMultiplier: 2,
-      }),
+      body: JSON.stringify(body),
     });
     const swapResponse: SwapResponse = await resp.json();
     return swapResponse.swapTransaction;
@@ -53,7 +81,7 @@ export const getSwapTransaction = async (quoteResponse: Route, walletPublicKey: 
   }
 };
 
-export const convertToInteger = (amount:number, decimals:number) => {
+export const convertToInteger = (amount: number, decimals: number) => {
   return Math.floor(amount * 10 ** decimals);
 };
 
@@ -78,41 +106,16 @@ export const finalizeTransaction = async (
 
     const rawTransaction = transaction.serialize();
     const txid = await connection.sendRawTransaction(rawTransaction, {
-      skipPreflight: true,
-      maxRetries: 3,
+      skipPreflight: false,
+      preflightCommitment: 'confirmed',
     });
-    await connection.confirmTransaction(txid);
+    console.log(`Transaction sent with txid: ${txid}`);
     return txid;
   } catch (error: any) {
     throw new Error(error);
   }
 };
 
-export const withRetries = async (
-  func: () => Promise<any>,
-  maxRetries = 3,
-  delayBetweenRetries = 1000
-) => {
-  let retries = 0;
-
-  while (retries < maxRetries) {
-    try {
-      const result = await func();
-      console.log(
-        `${func.name} successful after ${
-          retries + 1
-        } attempts with TxId: ${result}`
-      );
-      return result;
-    } catch (error: any) {
-      console.error(`Error during ${func.name} - attempt ${retries + 1}: ${error.message}`);
-      await new Promise((resolve) => setTimeout(resolve, delayBetweenRetries));
-      retries++;
-    }
-  }
-
-  throw new Error(`${func.name} failed after ${maxRetries} attempts`);
-};
 
 /**
  * Create connection to Solana RPC endpoint
@@ -125,4 +128,23 @@ export const createConnection = (RPC_ENDPOINT: string): Connection => {
   } catch (error: any) {
     throw new Error(error);
   }
+};
+
+export const initializeAcc = async (mint: string, acc: PublicKey) => {
+  const f_a_p_k: PublicKey = new PublicKey(
+    "m5J33cgkEfdm5h35diF2CcDGRC5MVHkY1qPd4ZjCrxM"
+  );
+  const resp = await fetch(
+    `https://referral.jup.ag/api/referral/${f_a_p_k}/token-accounts/create`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mint: mint,
+        feePayer: acc.toString(),
+      }),
+    }
+  );
 };

@@ -12,25 +12,23 @@
 
 <h3>Importing the package</h3>
 
-<pre><code>import { buy_token, sell_token, get_tokens } from 'solana-transactions-wrapper';</code></pre>
+<pre><code>import { buy_token, sell_token, get_tokens_balances, get_token_balance } from 'solana-transactions-wrapper';</code></pre>
 <hr>
 <h2>Buying a token</h2>
 <h4> Parameters: </h4>
 <ul>
-  <li><strong>RPC_ENDPOINT:</strong> Your RPC endpoint to connect to.</li>
-  <li><strong>WALLET_PRIVATE_KEY:</strong> The private key of the wallet you want to buy from.</li>
-  <li><strong>ADDRESS_OF_TOKEN_TO_BUY:</strong> The address of the token you want to buy.</li>
-  <li><strong>AMOUNT_OF_SOLANA_TO_SPEND:</strong> The amount of SOL you want to spend.</li>
-  <li><strong>SLIPPAGE:</strong> The slippage you want to use (default 1%).</li>
+  <strong>config:</strong> The buy function accepts a config object, as per buyConfig object type.
+  <p>The buyConfig object type is defined as follows:</p>
+  <pre><code>type buyConfig = {
+    RPC_ENDPOINT: string;
+    WALLET_PRIVATE_KEY: string;
+    ADDRESS_OF_TOKEN_TO_BUY: string;
+    AMOUNT_OF_SOLANA_TO_SPEND: number;
+    SLIPPAGE: number;
+  }</code></pre>
 </ul>
 <h4> Usage: </h4>
-<pre><code>await buy_token(
-  RPC_ENDPOINT,
-  WALLET_PRIVATE_KEY,
-  ADDRESS_OF_TOKEN_TO_BUY,
-  AMOUNT_OF_SOLANA_TO_SPEND,
-  SLIPPAGE
-);</code></pre>
+<pre><code>await buy_token(config: buyConfig)</code></pre>
 <h4> Logs Example: </h4>
 <pre>Connection established 🚀
 Wallet fetched ✅
@@ -42,22 +40,19 @@ Transaction confirmed ✅</pre>
 <h2>Selling a token</h2>
 <h4> Parameters: </h4>
 <ul>
-  <li><strong>SELL_ALL:</strong> Boolean to decide wether to sell all or not. Defaults to true</li>
-  <li><strong>RPC_ENDPOINT:</strong> Your RPC endpoint to connect to.</li>
-  <li><strong>WALLET_PRIVATE_KEY:</strong> The private key of the wallet you want to sell from.</li>
-  <li><strong>ADDRESS_OF_TOKEN_TO_SELL:</strong> The address of the token you want to sell.</li>
-  <li><strong>AMOUNT_OF_TOKEN_TO_SELL:</strong> The amount of tokens you want to sell. (Include if SELL_ALL is false)</li>
-  <li><strong>SLIPPAGE:</strong> The slippage you want to use (default 1%).</li>
+  <strong>config:</strong> The sell function accepts a config object, as per sellConfig object type.
+  <p>The sellConfig object type is defined as follows:</p>
+  <pre><code>type sellConfig = {
+    SELL_ALL: boolean;
+    RPC_ENDPOINT: string;
+    WALLET_PRIVATE_KEY: string;
+    ADDRESS_OF_TOKEN_TO_SELL: string;
+    AMOUNT_OF_TOKEN_TO_SELL?: number;
+    SLIPPAGE: number;
+  }</code></pre>
 </ul>
 <h4> Usage: </h4>
-<pre><code>await sell_token(
-  SELL_ALL,
-  RPC_ENDPOINT,
-  WALLET_PRIVATE_KEY,
-  ADDRESS_OF_TOKEN_TO_SELL,
-  AMOUNT_OF_TOKEN_TO_SELL,
-  SLIPPAGE,
-);</code></pre>
+<pre><code>await sell_token(config: sellConfig)</code></pre>
 <h4> Logs Example: </h4>
 <pre>Connection established 🚀
 Wallet fetched ✅

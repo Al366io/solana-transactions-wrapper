@@ -23,14 +23,11 @@ export const buyToken = async (
       decimals
     );
 
-    await Swapper.initializeAcc(addressOfTokenIn, wallet.publicKey)
-
     const quoteResponse = await Swapper.getQuote(
       SOLANA_ADDRESS,
       addressOfTokenIn,
       convertedAmountOfTokenOut,
-      slippage,
-      true
+      slippage
     );
 
     const walletPublicKey = wallet.publicKey.toString();

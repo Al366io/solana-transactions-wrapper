@@ -5,24 +5,21 @@ import { Wallet } from "@project-serum/anchor";
 import bs58 from "bs58";
 import { sellToken } from "./sell-helper";
 import { getAccountTokens, getBalanceOfToken } from "./walletInfo";
-import { TokensObject } from "./types";
+import { TokensObject, buyConfig, sellConfig } from "./types";
 
 /**
  * Function to buy a token with SOL
- * @param RPC_ENDPOINT Your RPC endpoint to connect to
- * @param WALLET_PRIVATE_KEY The private key of the wallet you want to buy from
- * @param ADDRESS_OF_TOKEN_TO_BUY The address of the token you want to buy
- * @param AMOUNT_OF_SOLANA_TO_SPEND The amount of SOL you want to spend
- * @param SLIPPAGE The slippage you want to use (default 1%)
+ * @param config The configuration object (as per buyConfig type)
  * @returns Promise<string> The txid
  */
-export const buy_token = async (
-  RPC_ENDPOINT: string,
-  WALLET_PRIVATE_KEY: string,
-  ADDRESS_OF_TOKEN_TO_BUY: string,
-  AMOUNT_OF_SOLANA_TO_SPEND: number,
-  SLIPPAGE: number = 1
-): Promise<void> => {
+export const buy_token = async (config: buyConfig): Promise<void> => {
+  const {
+    RPC_ENDPOINT,
+    WALLET_PRIVATE_KEY,
+    ADDRESS_OF_TOKEN_TO_BUY,
+    AMOUNT_OF_SOLANA_TO_SPEND,
+    SLIPPAGE = 1
+  } = config;
   try {
     const connection: Connection = createConnection(RPC_ENDPOINT);
     console.log("Connection established 🚀");
@@ -46,22 +43,18 @@ export const buy_token = async (
 
 /**
  * Function to sell all of a token in your wallet for SOL
- * @param SELL_ALL Whether or not you want to sell all of the token in your wallet. If false, you need to specify AMOUNT_OF_TOKEN_TO_SELL
- * @param RPC_ENDPOINT Your RPC endpoint to connect to
- * @param WALLET_PRIVATE_KEY The private key of the wallet you want to sell from
- * @param ADDRESS_OF_TOKEN_TO_SELL The address of the token you want to sell
- * @param AMOUNT_OF_TOKEN_TO_SELL The amount of the token you want to sell (optional)
- * @param SLIPPAGE The slippage you want to use (default 1%)
+ * @param config The configuration object (as per sellConfig type)
  * @returns Promise<string> The txid
  */
-export const sell_token = async (
-  SELL_ALL: boolean = true,
-  RPC_ENDPOINT: string,
-  WALLET_PRIVATE_KEY: string,
-  ADDRESS_OF_TOKEN_TO_SELL: string,
-  AMOUNT_OF_TOKEN_TO_SELL: number | undefined = undefined,
-  SLIPPAGE: number = 1,
-): Promise<string> => {
+export const sell_token = async (config: sellConfig): Promise<string> => {
+  const {
+    SELL_ALL,
+    RPC_ENDPOINT,
+    WALLET_PRIVATE_KEY,
+    ADDRESS_OF_TOKEN_TO_SELL,
+    AMOUNT_OF_TOKEN_TO_SELL,
+    SLIPPAGE = 1
+  } = config;
   if (!SELL_ALL && !AMOUNT_OF_TOKEN_TO_SELL) {
     throw new Error("You need to specify AMOUNT_OF_TOKEN_TO_SELL if SELL_ALL is false");
   }

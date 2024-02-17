@@ -3,6 +3,7 @@
   "version": "2.1.0",
   "description": "Handy tool to execute buy/sell transactions on the SOLANA chain",
   "main": "dist/index.js",
+  "types": "dist/types.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --project tsconfig.build.json",

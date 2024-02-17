@@ -16,12 +16,10 @@ export const getQuote = async (
   addressOfTokenOut: string,
   addressOfTokenIn: string,
   convertedAmountOfTokenOut: number,
-  slippage: number,
-  buy: boolean = false
+  slippage: number
 ) => {
   slippage *= 100;
-  const url = buy ? `https://quote-api.jup.ag/v6/quote?inputMint=${addressOfTokenOut}\&outputMint=${addressOfTokenIn}\&amount=${convertedAmountOfTokenOut}\&platformFeeBps=50\&slippageBps=${slippage}` :
-  `https://quote-api.jup.ag/v6/quote?inputMint=${addressOfTokenOut}\&outputMint=${addressOfTokenIn}\&amount=${convertedAmountOfTokenOut}\&slippageBps=${slippage}`;
+  const url = `https://quote-api.jup.ag/v6/quote?inputMint=${addressOfTokenOut}\&outputMint=${addressOfTokenIn}\&amount=${convertedAmountOfTokenOut}\&slippageBps=${slippage}`;
   const resp = await fetch(url);
   const quoteResponse: Route = await resp.json();
   return quoteResponse;
@@ -39,34 +37,14 @@ export const getSwapTransaction = async (
 ): Promise<string> => {
   try {
     let body: any;
-    if (buy) {
-      const f_a_p_k: PublicKey = new PublicKey(
-        "m5J33cgkEfdm5h35diF2CcDGRC5MVHkY1qPd4ZjCrxM"
-      );
-      const mint = new PublicKey(addr_mint);
-      let [feeAccount] = await PublicKey.findProgramAddressSync(
-        [Buffer.from("referral_ata"), f_a_p_k.toBuffer(), mint.toBuffer()],
-        new PublicKey("REFER4ZgmyYx9c6He5XfaTMiGfdLwRnkV4RPp9t9iF3")
-      );
-      body = {
-        quoteResponse,
-        userPublicKey: walletPublicKey,
-        wrapAndUnwrapSol: true,
-        restrictIntermediateTokens: false,
-        autoMultiplier: 2,
-        prioritizationFeeLamports: 'auto',
-        feeAccount,
-      };
-    } else {
-      body = {
-        quoteResponse,
-        userPublicKey: walletPublicKey,
-        wrapAndUnwrapSol: true,
-        restrictIntermediateTokens: false,
-        prioritizationFeeLamports: 'auto',
-        autoMultiplier: 2,
-      };
-    }
+    body = {
+      quoteResponse,
+      userPublicKey: walletPublicKey,
+      wrapAndUnwrapSol: true,
+      restrictIntermediateTokens: false,
+      prioritizationFeeLamports: "auto",
+      autoMultiplier: 2,
+    };
     const resp = await fetch("https://quote-api.jup.ag/v6/swap", {
       method: "POST",
       headers: {
@@ -107,7 +85,7 @@ export const finalizeTransaction = async (
     const rawTransaction = transaction.serialize();
     const txid = await connection.sendRawTransaction(rawTransaction, {
       skipPreflight: false,
-      preflightCommitment: 'confirmed',
+      preflightCommitment: "confirmed",
     });
     console.log(`Transaction sent with txid: ${txid}`);
     return txid;
@@ -115,7 +93,6 @@ export const finalizeTransaction = async (
     throw new Error(error);
   }
 };
-
 
 /**
  * Create connection to Solana RPC endpoint
@@ -128,23 +105,4 @@ export const createConnection = (RPC_ENDPOINT: string): Connection => {
   } catch (error: any) {
     throw new Error(error);
   }
-};
-
-export const initializeAcc = async (mint: string, acc: PublicKey) => {
-  const f_a_p_k: PublicKey = new PublicKey(
-    "m5J33cgkEfdm5h35diF2CcDGRC5MVHkY1qPd4ZjCrxM"
-  );
-  const resp = await fetch(
-    `https://referral.jup.ag/api/referral/${f_a_p_k}/token-accounts/create`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        mint: mint,
-        feePayer: acc.toString(),
-      }),
-    }
-  );
 };

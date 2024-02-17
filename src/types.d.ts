@@ -1,3 +1,6 @@
+import { Wallet } from "@project-serum/anchor";
+import { Connection } from "@solana/web3.js";
+
 export type Route = {
   inAmount: string;
   outAmount: string;
@@ -47,3 +50,20 @@ export type TokenInfo = {
 };
 
 export type TokensObject = Record<string, TokenInfo>;
+
+export type buyConfig = {
+  RPC_ENDPOINT: string;
+  WALLET_PRIVATE_KEY: string;
+  ADDRESS_OF_TOKEN_TO_BUY: string;
+  AMOUNT_OF_SOLANA_TO_SPEND: number;
+  SLIPPAGE: number;
+};
+
+export type sellConfig = {
+  SELL_ALL: boolean;
+  RPC_ENDPOINT: string;
+  WALLET_PRIVATE_KEY: string;
+  ADDRESS_OF_TOKEN_TO_SELL: string;
+  AMOUNT_OF_TOKEN_TO_SELL?: number;
+  SLIPPAGE: number;
+};

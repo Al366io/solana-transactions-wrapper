@@ -25,6 +25,7 @@
     ADDRESS_OF_TOKEN_TO_BUY: string;
     AMOUNT_OF_SOLANA_TO_SPEND: number;
     SLIPPAGE: number;
+    PRIORITIZATION_FEE_LAMPORTS?: number | "auto";
   }</code></pre>
 </ul>
 <h4> Usage: </h4>
@@ -49,6 +50,7 @@ Transaction confirmed ✅</pre>
     ADDRESS_OF_TOKEN_TO_SELL: string;
     AMOUNT_OF_TOKEN_TO_SELL?: number;
     SLIPPAGE: number;
+    PRIORITIZATION_FEE_LAMPORTS?: number | "auto";
   }</code></pre>
 </ul>
 <h4> Usage: </h4>
@@ -90,4 +92,3 @@ Transaction confirmed ✅</pre>
   <li><strong>TOKEN_ADDRESS:</strong> The address of the token you want to get the balance from.</li>
 </ul>
 <p>This function returns a promise that resolves to the balance of the token.</p>
-

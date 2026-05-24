@@ -1,6 +1,6 @@
 import { Connection, PublicKey, VersionedTransaction } from "@solana/web3.js";
 import fetch from "cross-fetch";
-import { Route, SwapResponse } from "./types";
+import { PrioritizationFeeLamports, Route, SwapResponse } from "./types";
 import { Wallet } from "@project-serum/anchor";
 
 /**
@@ -33,7 +33,8 @@ export const getSwapTransaction = async (
   quoteResponse: Route,
   walletPublicKey: string,
   buy: boolean,
-  addr_mint: string = ""
+  addr_mint: string = "",
+  prioritizationFeeLamports: PrioritizationFeeLamports = "auto"
 ): Promise<string> => {
   try {
     let body: any;
@@ -42,7 +43,7 @@ export const getSwapTransaction = async (
       userPublicKey: walletPublicKey,
       wrapAndUnwrapSol: true,
       restrictIntermediateTokens: false,
-      prioritizationFeeLamports: "auto",
+      prioritizationFeeLamports,
       autoMultiplier: 2,
     };
     const resp = await fetch("https://quote-api.jup.ag/v6/swap", {

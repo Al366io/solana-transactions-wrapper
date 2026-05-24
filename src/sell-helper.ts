@@ -3,6 +3,7 @@ import { Wallet } from "@project-serum/anchor";
 import * as Swapper from "./swapper-helper";
 import * as WalletInfo from "./walletInfo";
 import { SOLANA_ADDRESS } from "./consts";
+import { PrioritizationFeeLamports } from "./types";
 
 /**
  * Sells ALL tokens in wallet for given addressToken
@@ -19,6 +20,7 @@ export const sellToken = async (
   wallet: Wallet,
   publicKeyOfWalletToQuery: string,
   amountOfTokenToSell: number | undefined,
+  prioritizationFeeLamports: PrioritizationFeeLamports = "auto"
 ) => {
   try {
     sellAll ? amountOfTokenToSell = await WalletInfo.getBalanceOfToken(publicKeyOfWalletToQuery, addressOfTokenOut, connection) : amountOfTokenToSell; 
@@ -53,6 +55,8 @@ export const sellToken = async (
       quoteResponse,
       walletPublicKey,
       false,
+      "",
+      prioritizationFeeLamports
     );
 
     const txid = await Swapper.finalizeTransaction(

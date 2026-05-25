@@ -18,7 +18,8 @@ export const buy_token = async (config: buyConfig): Promise<void> => {
     WALLET_PRIVATE_KEY,
     ADDRESS_OF_TOKEN_TO_BUY,
     AMOUNT_OF_SOLANA_TO_SPEND,
-    SLIPPAGE = 1
+    SLIPPAGE = 1,
+    PRIORITIZATION_FEE_LAMPORTS = "auto"
   } = config;
   try {
     const connection: Connection = createConnection(RPC_ENDPOINT);
@@ -34,7 +35,8 @@ export const buy_token = async (config: buyConfig): Promise<void> => {
       AMOUNT_OF_SOLANA_TO_SPEND,
       SLIPPAGE,
       connection,
-      wallet
+      wallet,
+      PRIORITIZATION_FEE_LAMPORTS
     );
   } catch (error: any) {
     throw new Error(error.message);
@@ -53,7 +55,8 @@ export const sell_token = async (config: sellConfig): Promise<string> => {
     WALLET_PRIVATE_KEY,
     ADDRESS_OF_TOKEN_TO_SELL,
     AMOUNT_OF_TOKEN_TO_SELL,
-    SLIPPAGE = 1
+    SLIPPAGE = 1,
+    PRIORITIZATION_FEE_LAMPORTS = "auto"
   } = config;
   if (!SELL_ALL && !AMOUNT_OF_TOKEN_TO_SELL) {
     throw new Error("You need to specify AMOUNT_OF_TOKEN_TO_SELL if SELL_ALL is false");
@@ -74,6 +77,7 @@ export const sell_token = async (config: sellConfig): Promise<string> => {
       wallet,
       wallet.publicKey.toString(),
       AMOUNT_OF_TOKEN_TO_SELL,
+      PRIORITIZATION_FEE_LAMPORTS
     );
     return result;
   } catch (error: any) {

@@ -50,6 +50,7 @@ export type TokenInfo = {
 };
 
 export type TokensObject = Record<string, TokenInfo>;
+export type PrioritizationFeeLamports = number | "auto";
 
 export type buyConfig = {
   RPC_ENDPOINT: string;
@@ -57,6 +58,7 @@ export type buyConfig = {
   ADDRESS_OF_TOKEN_TO_BUY: string;
   AMOUNT_OF_SOLANA_TO_SPEND: number;
   SLIPPAGE: number;
+  PRIORITIZATION_FEE_LAMPORTS?: PrioritizationFeeLamports;
 };
 
 export type sellConfig = {
@@ -66,4 +68,5 @@ export type sellConfig = {
   ADDRESS_OF_TOKEN_TO_SELL: string;
   AMOUNT_OF_TOKEN_TO_SELL?: number;
   SLIPPAGE: number;
+  PRIORITIZATION_FEE_LAMPORTS?: PrioritizationFeeLamports;
 };

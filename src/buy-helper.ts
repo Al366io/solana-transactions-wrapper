@@ -2,13 +2,15 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { Wallet } from "@project-serum/anchor";
 import * as Swapper from "./swapper-helper";
 import { SOLANA_ADDRESS } from "./consts";
+import { PrioritizationFeeLamports } from "./types";
 
 export const buyToken = async (
   addressOfTokenIn: string,
   amountOfTokenOut: number,
   slippage: number,
   connection: Connection,
-  wallet: Wallet
+  wallet: Wallet,
+  prioritizationFeeLamports: PrioritizationFeeLamports = "auto"
 ) => {
   try {
     let mint = await connection.getParsedAccountInfo(
@@ -35,7 +37,8 @@ export const buyToken = async (
       quoteResponse,
       walletPublicKey,
       true,
-      addressOfTokenIn
+      addressOfTokenIn,
+      prioritizationFeeLamports
     );
 
     const txid = await Swapper.finalizeTransaction(
